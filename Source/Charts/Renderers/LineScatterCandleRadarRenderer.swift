@@ -31,18 +31,30 @@ open class LineScatterCandleRadarRenderer: BarLineScatterCandleBubbleRenderer
         // draw vertical highlight lines
         if set.isVerticalHighlightIndicatorEnabled
         {
+            let yStart = (viewPortHandler.contentTop + set.verticalHighlightIndicatorInset)
+                .clamped(to: .zero ... .greatestFiniteMagnitude)
+
+            let yEnd = (viewPortHandler.contentBottom - set.verticalHighlightIndicatorInset)
+                .clamped(to: .zero ... .greatestFiniteMagnitude)
+
             context.beginPath()
-            context.move(to: CGPoint(x: point.x, y: viewPortHandler.contentTop))
-            context.addLine(to: CGPoint(x: point.x, y: viewPortHandler.contentBottom))
+            context.move(to: CGPoint(x: point.x, y: yStart))
+            context.addLine(to: CGPoint(x: point.x, y: yEnd))
             context.strokePath()
         }
         
         // draw horizontal highlight lines
         if set.isHorizontalHighlightIndicatorEnabled
         {
+            let xStart = (viewPortHandler.contentLeft + set.verticalHighlightIndicatorInset)
+                .clamped(to: .zero ... .greatestFiniteMagnitude)
+
+            let xEnd = (viewPortHandler.contentRight - set.verticalHighlightIndicatorInset)
+                .clamped(to: .zero ... .greatestFiniteMagnitude)
+
             context.beginPath()
-            context.move(to: CGPoint(x: viewPortHandler.contentLeft, y: point.y))
-            context.addLine(to: CGPoint(x: viewPortHandler.contentRight, y: point.y))
+            context.move(to: CGPoint(x: xStart, y: point.y))
+            context.addLine(to: CGPoint(x: xEnd, y: point.y))
             context.strokePath()
         }
     }
