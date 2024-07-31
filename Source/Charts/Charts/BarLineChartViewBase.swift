@@ -516,6 +516,8 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         case y
     }
     
+    public var isPanGestureBegan: Bool { _panGestureRecognizer.state == .began }
+
     private var _isDragging = false
     private var _isScaling = false
     private var _gestureScaleAxis = GestureScaleAxis.both

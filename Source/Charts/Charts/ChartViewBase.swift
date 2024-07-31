@@ -34,6 +34,14 @@ public protocol ChartViewDelegate
     /// Called when a user stops panning between values on the chart
     @objc optional func chartViewDidEndPanning(_ chartView: ChartViewBase)
     
+    @objc optional func chartViewDidReceiveTouches(_ chartView: ChartViewBase)
+
+    @objc optional func chartViewDidMoveTouches(_ chartView: ChartViewBase)
+
+    @objc optional func chartViewDidEndTouches(_ chartView: ChartViewBase)
+
+    @objc optional func chartViewDidCancelTouches(_ chartView: ChartViewBase)
+
     // Called when nothing has been selected or an "un-select" has been made.
     @objc optional func chartValueNothingSelected(_ chartView: ChartViewBase)
     
@@ -875,20 +883,24 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
     open override func nsuiTouchesBegan(_ touches: Set<NSUITouch>, withEvent event: NSUIEvent?)
     {
         super.nsuiTouchesBegan(touches, withEvent: event)
+        delegate?.chartViewDidReceiveTouches?(self)
     }
     
     open override func nsuiTouchesMoved(_ touches: Set<NSUITouch>, withEvent event: NSUIEvent?)
     {
         super.nsuiTouchesMoved(touches, withEvent: event)
+        delegate?.chartViewDidMoveTouches?(self)
     }
     
     open override func nsuiTouchesEnded(_ touches: Set<NSUITouch>, withEvent event: NSUIEvent?)
     {
         super.nsuiTouchesEnded(touches, withEvent: event)
+        delegate?.chartViewDidEndTouches?(self)
     }
     
     open override func nsuiTouchesCancelled(_ touches: Set<NSUITouch>?, withEvent event: NSUIEvent?)
     {
         super.nsuiTouchesCancelled(touches, withEvent: event)
+        delegate?.chartViewDidCancelTouches?(self)
     }
 }
