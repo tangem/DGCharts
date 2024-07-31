@@ -507,6 +507,20 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         }
     }
     
+    // MARK: - Highlighting
+    
+    private func highlight(at touchPoint: CGPoint) {
+        let h = getHighlightByTouchPoint(touchPoint)
+
+        let lastHighlighted = self.lastHighlighted
+
+        if h != lastHighlighted
+        {
+            self.lastHighlighted = h
+            self.highlightValue(h, callDelegate: true)
+        }
+    }
+
     // MARK: - Gestures
     
     private enum GestureScaleAxis
@@ -531,6 +545,20 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
     private var _decelerationDisplayLink: NSUIDisplayLink!
     private var _decelerationVelocity = CGPoint()
     
+    override open func nsuiTouchesBegan(_ touches: Set<NSUITouch>, withEvent event: NSUIEvent?) {
+        super.nsuiTouchesBegan(touches, withEvent: event)
+
+        guard
+            isHighlightPerDragEnabled,
+            let touch = touches.first
+        else {
+            return
+        }
+
+        let touchPoint = touch.location(in: self)
+        highlight(at: touchPoint)
+    }
+
     @objc private func tapGestureRecognized(_ recognizer: NSUITapGestureRecognizer)
     {
         if data === nil
@@ -763,15 +791,8 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             }
             else if isHighlightPerDragEnabled
             {
-                let h = getHighlightByTouchPoint(recognizer.location(in: self))
-                
-                let lastHighlighted = self.lastHighlighted
-                
-                if h != lastHighlighted
-                {
-                    self.lastHighlighted = h
-                    self.highlightValue(h, callDelegate: true)
-                }
+                let touchPoint = recognizer.location(in: self)
+                highlight(at: touchPoint)
             }
         }
         else if recognizer.state == NSUIGestureRecognizerState.ended || recognizer.state == NSUIGestureRecognizerState.cancelled
