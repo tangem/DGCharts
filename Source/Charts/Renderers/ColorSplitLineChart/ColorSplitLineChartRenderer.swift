@@ -349,8 +349,7 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
         min: Int,
         range: Int,
         matrix: CGAffineTransform
-    ) -> CGPath
-    {
+    ) -> CGPath {
         let phaseY = animator.phaseY
         let isDrawSteppedEnabled = dataSet.mode == .stepped
         let matrix = matrix
@@ -360,20 +359,17 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
         let filled = CGMutablePath()
 
         e = dataSet.entryForIndex(min)
-        if e != nil
-        {
+        if e != nil {
             filled.move(to: CGPoint(x: CGFloat(e.x), y: fillMin), transform: matrix)
             filled.addLine(to: CGPoint(x: CGFloat(e.x), y: CGFloat(e.y * phaseY)), transform: matrix)
         }
 
         // create a new path
-        for x in stride(from: (min + 1), through: range + min, by: 1)
-        {
+        for x in stride(from: min + 1, through: range + min, by: 1) {
             guard let e = dataSet.entryForIndex(x) else { continue }
 
-            if isDrawSteppedEnabled
-            {
-                guard let ePrev = dataSet.entryForIndex(x-1) else { continue }
+            if isDrawSteppedEnabled {
+                guard let ePrev = dataSet.entryForIndex(x - 1) else { continue }
                 filled.addLine(to: CGPoint(x: CGFloat(e.x), y: CGFloat(ePrev.y * phaseY)), transform: matrix)
             }
 
@@ -382,8 +378,7 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
 
         // close up
         e = dataSet.entryForIndex(range + min)
-        if e != nil
-        {
+        if e != nil {
             filled.addLine(to: CGPoint(x: CGFloat(e.x), y: fillMin), transform: matrix)
         }
         filled.closeSubpath()
