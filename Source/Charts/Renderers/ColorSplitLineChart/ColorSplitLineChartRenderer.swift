@@ -80,8 +80,6 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
             context.addEllipse(in: innerRect)
             context.addEllipse(in: holeRect)
             context.fillPath(using: .evenOdd)
-
-            context.closePath()
         }
     }
 
