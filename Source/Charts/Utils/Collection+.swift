@@ -1,5 +1,5 @@
 //
-//  ColorSplitLineChartRenderer.swift
+//  Collection+.swift
 //  Tangem
 //
 //  Created by Andrey Fedorov on 01.08.2024.
