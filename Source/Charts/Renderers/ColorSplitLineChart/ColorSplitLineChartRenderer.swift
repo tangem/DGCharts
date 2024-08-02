@@ -15,10 +15,10 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
 
     private var chartView: ChartViewBase? { dataProvider as? ChartViewBase }
 
-    /// - Note: The implementation is loosely based on the implementation of the parent class, 
+    /// - Note: The implementation is loosely based on the implementation of the parent class,
     /// `LineChartRenderer.drawLinear(context:dataSet:)`.
     override public func drawLinear(context: CGContext, dataSet: LineChartDataSetProtocol) {
-        guard let dataProvider = dataProvider else { 
+        guard let dataProvider = dataProvider else {
             return
         }
 
@@ -55,43 +55,45 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
                 return
             }
 
-            if let highlightedIndex = chartView.lastHighlighted {
-                let highlightedEntryIndex = dataSet.entryIndex(
-                    x: highlightedIndex.x,
-                    closestToY: highlightedIndex.y,
-                    rounding: .closest
+            if let lastHighlighted = chartView.lastHighlighted,
+               let highlightedEntry = dataSet.entryForXValue(
+                lastHighlighted.x,
+                closestToY: lastHighlighted.y,
+                rounding: .closest
+               ),
+               let segmentAppearanceBefore = delegate?.segmentAppearanceBefore(
+                highlightedEntry: highlightedEntry,
+                highlight: lastHighlighted,
+                renderer: self
+               ),
+               let segmentAppearanceAfter = delegate?.segmentAppearanceAfter(
+                highlightedEntry: highlightedEntry,
+                highlight: lastHighlighted,
+                renderer: self
+               ) {
+                let highlightedEntryIndex = dataSet.entryIndex(entry: highlightedEntry)
+                // The part of line before the highlight
+                drawLinearSegment(
+                    context: context,
+                    dataSet: dataSet,
+                    from: _xBounds.min,
+                    through: highlightedEntryIndex + _xBounds.min,
+                    color: segmentAppearanceBefore.lineColor.cgColor,
+                    valueToPixelMatrix: valueToPixelMatrix,
+                    phaseY: phaseY,
+                    isDrawSteppedEnabled: isDrawSteppedEnabled
                 )
-
-                if let segmentAppearanceBefore = delegate?.segmentAppearanceBeforeHighlightedEntry(
-                    atIndex: highlightedEntryIndex,
-                    renderer: self
-                ), let segmentAppearanceAfter = delegate?.segmentAppearanceAfterHighlightedEntry(
-                    atIndex: highlightedEntryIndex,
-                    renderer: self
-                ) {
-                    // The part of line before the highlight
-                    drawLinearSegment(
-                        context: context,
-                        dataSet: dataSet,
-                        from: _xBounds.min,
-                        through: highlightedEntryIndex + _xBounds.min,
-                        color: segmentAppearanceBefore.lineColor.cgColor,
-                        valueToPixelMatrix: valueToPixelMatrix,
-                        phaseY: phaseY,
-                        isDrawSteppedEnabled: isDrawSteppedEnabled
-                    )
-                    // The part of line after the highlight
-                    drawLinearSegment(
-                        context: context,
-                        dataSet: dataSet,
-                        from: highlightedEntryIndex + 1,
-                        through: _xBounds.range + _xBounds.min,
-                        color: segmentAppearanceAfter.lineColor.cgColor,
-                        valueToPixelMatrix: valueToPixelMatrix,
-                        phaseY: phaseY,
-                        isDrawSteppedEnabled: isDrawSteppedEnabled
-                    )
-                }
+                // The part of line after the highlight
+                drawLinearSegment(
+                    context: context,
+                    dataSet: dataSet,
+                    from: highlightedEntryIndex + 1,
+                    through: _xBounds.range + _xBounds.min,
+                    color: segmentAppearanceAfter.lineColor.cgColor,
+                    valueToPixelMatrix: valueToPixelMatrix,
+                    phaseY: phaseY,
+                    isDrawSteppedEnabled: isDrawSteppedEnabled
+                )
             } else {
                 drawLinearSegment(
                     context: context,
@@ -113,7 +115,7 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
         trans: Transformer,
         bounds: BarLineScatterCandleBubbleRenderer.XBounds
     ) {
-        guard let dataProvider = dataProvider else { 
+        guard let dataProvider = dataProvider else {
             return
         }
 
@@ -127,46 +129,48 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
             return
         }
 
-        if let highlightedIndex = chartView.lastHighlighted {
-            let highlightedEntryIndex = dataSet.entryIndex(
-                x: highlightedIndex.x,
-                closestToY: highlightedIndex.y,
-                rounding: .closest
+        if let lastHighlighted = chartView.lastHighlighted,
+           let highlightedEntry = dataSet.entryForXValue(
+            lastHighlighted.x,
+            closestToY: lastHighlighted.y,
+            rounding: .closest
+           ),
+           let segmentAppearanceBefore = delegate?.segmentAppearanceBefore(
+            highlightedEntry: highlightedEntry,
+            highlight: lastHighlighted,
+            renderer: self
+           ),
+           let segmentAppearanceAfter = delegate?.segmentAppearanceAfter(
+            highlightedEntry: highlightedEntry,
+            highlight: lastHighlighted,
+            renderer: self
+           ) {
+            let highlightedEntryIndex = dataSet.entryIndex(entry: highlightedEntry)
+            // gradient before the highlight
+            let filledPathBeforeHighlight = generateFilledPath(
+                dataSet: dataSet,
+                fillMin: fillMin,
+                min: bounds.min,
+                range: highlightedEntryIndex,
+                matrix: trans.valueToPixelMatrix
+            )
+            // gradient after the highlight
+            let filledPathAfterHighlight = generateFilledPath(
+                dataSet: dataSet,
+                fillMin: fillMin,
+                min: highlightedEntryIndex,
+                range: bounds.range - highlightedEntryIndex,
+                matrix: trans.valueToPixelMatrix
             )
 
-            if let segmentAppearanceBefore = delegate?.segmentAppearanceBeforeHighlightedEntry(
-                atIndex: highlightedEntryIndex,
-                renderer: self
-            ), let segmentAppearanceAfter = delegate?.segmentAppearanceAfterHighlightedEntry(
-                atIndex: highlightedEntryIndex,
-                renderer: self
-            ) {
-                // gradient before the highlight
-                let filledPathBeforeHighlight = generateFilledPath(
-                    dataSet: dataSet,
-                    fillMin: fillMin,
-                    min: bounds.min,
-                    range: highlightedEntryIndex,
-                    matrix: trans.valueToPixelMatrix
-                )
-                // gradient after the highlight
-                let filledPathAfterHighlight = generateFilledPath(
-                    dataSet: dataSet,
-                    fillMin: fillMin,
-                    min: highlightedEntryIndex,
-                    range: bounds.range - highlightedEntryIndex,
-                    matrix: trans.valueToPixelMatrix
-                )
+            filledPaths.append(filledPathBeforeHighlight)
+            filledPaths.append(filledPathAfterHighlight)
 
-                filledPaths.append(filledPathBeforeHighlight)
-                filledPaths.append(filledPathAfterHighlight)
+            fillForPath[filledPathBeforeHighlight] = segmentAppearanceBefore.fill
+            fillForPath[filledPathAfterHighlight] = segmentAppearanceAfter.fill
 
-                fillForPath[filledPathBeforeHighlight] = segmentAppearanceBefore.fill
-                fillForPath[filledPathAfterHighlight] = segmentAppearanceAfter.fill
-
-                fillAlphaForPath[filledPathBeforeHighlight] = segmentAppearanceBefore.fillAlpha
-                fillAlphaForPath[filledPathAfterHighlight] = segmentAppearanceAfter.fillAlpha
-            }
+            fillAlphaForPath[filledPathBeforeHighlight] = segmentAppearanceBefore.fillAlpha
+            fillAlphaForPath[filledPathAfterHighlight] = segmentAppearanceAfter.fillAlpha
         } else if let fill = dataSet.fill {
             let filledPath = generateFilledPath(
                 dataSet: dataSet,
@@ -200,7 +204,7 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
         }
     }
 
-    /// - Note: The implementation is loosely based on the implementation of the parent class, 
+    /// - Note: The implementation is loosely based on the implementation of the parent class,
     /// `LineChartRenderer.drawLinear(context:dataSet:)`.
     private func drawLinearSegment(
         context: CGContext,

@@ -9,14 +9,15 @@
 import Foundation
 
 public protocol ColorSplitLineChartRendererDelegate: AnyObject {
-    // TODO: Andrey Fedorov - replace entryIndex with highlight!
-    func segmentAppearanceBeforeHighlightedEntry(
-        atIndex entryIndex: Int,
+    func segmentAppearanceBefore(
+        highlightedEntry: ChartDataEntry,
+        highlight: Highlight,
         renderer: ColorSplitLineChartRenderer
     ) -> ColorSplitLineChartSegmentAppearance?
 
-    func segmentAppearanceAfterHighlightedEntry(
-        atIndex entryIndex: Int,
+    func segmentAppearanceAfter(
+        highlightedEntry: ChartDataEntry,
+        highlight: Highlight,
         renderer: ColorSplitLineChartRenderer
     ) -> ColorSplitLineChartSegmentAppearance?
 }
