@@ -8,8 +8,8 @@
 
 import Foundation
 import CoreGraphics
-import DGCharts
 
+/// A chart renderer capable of rendering line charts using different appearance for parts before/after the highlighted point.
 public final class ColorSplitLineChartRenderer: LineChartRenderer {
     public weak var delegate: ColorSplitLineChartRendererDelegate?
 
@@ -96,7 +96,6 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
 
         let entryCount = dataSet.entryCount
         let isDrawSteppedEnabled = dataSet.mode == .stepped
-        let pointsPerEntryPair = isDrawSteppedEnabled ? 4 : 2
 
         let phaseY = animator.phaseY
 
@@ -239,7 +238,7 @@ public final class ColorSplitLineChartRenderer: LineChartRenderer {
 
             fillAlphaForPath[filledPathBeforeHighlight] = segmentAppearanceBefore.fillAlpha
             fillAlphaForPath[filledPathAfterHighlight] = segmentAppearanceAfter.fillAlpha
-        } else if let fill = dataSet.fill {
+        } else if dataSet.fill != nil {
             let filledPath = generateFilledPath(
                 dataSet: dataSet,
                 fillMin: fillMin,
