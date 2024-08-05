@@ -33,14 +33,6 @@ public protocol ChartViewDelegate
     
     /// Called when a user stops panning between values on the chart
     @objc optional func chartViewDidEndPanning(_ chartView: ChartViewBase)
-    
-    @objc optional func chartViewDidReceiveTouches(_ chartView: ChartViewBase)
-
-    @objc optional func chartViewDidMoveTouches(_ chartView: ChartViewBase)
-
-    @objc optional func chartViewDidEndTouches(_ chartView: ChartViewBase)
-
-    @objc optional func chartViewDidCancelTouches(_ chartView: ChartViewBase)
 
     // Called when nothing has been selected or an "un-select" has been made.
     @objc optional func chartValueNothingSelected(_ chartView: ChartViewBase)
@@ -53,6 +45,16 @@ public protocol ChartViewDelegate
 
     // Callbacks when Animator stops animating
     @objc optional func chartView(_ chartView: ChartViewBase, animatorDidStop animator: Animator)
+
+    // MARK: - Touch handling (callbacks like `touchesBegan(_:with:)`, `touchesEnded(_:with:)`, etc from the underlying UIView/NSView instance)
+
+    @objc optional func touchesBegan(in chartView: ChartViewBase, touches: Set<NSUITouch>, withEvent event: NSUIEvent?)
+
+    @objc optional func touchesMoved(in chartView: ChartViewBase, touches: Set<NSUITouch>, withEvent event: NSUIEvent?)
+
+    @objc optional func touchesEnded(in chartView: ChartViewBase, touches: Set<NSUITouch>, withEvent event: NSUIEvent?)
+
+    @objc optional func touchesCancelled(in chartView: ChartViewBase, touches: Set<NSUITouch>?, withEvent event: NSUIEvent?)
 }
 
 open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
@@ -883,24 +885,24 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
     open override func nsuiTouchesBegan(_ touches: Set<NSUITouch>, withEvent event: NSUIEvent?)
     {
         super.nsuiTouchesBegan(touches, withEvent: event)
-        delegate?.chartViewDidReceiveTouches?(self)
+        delegate?.touchesBegan?(in: self, touches: touches, withEvent: event)
     }
     
     open override func nsuiTouchesMoved(_ touches: Set<NSUITouch>, withEvent event: NSUIEvent?)
     {
         super.nsuiTouchesMoved(touches, withEvent: event)
-        delegate?.chartViewDidMoveTouches?(self)
+        delegate?.touchesMoved?(in: self, touches: touches, withEvent: event)
     }
     
     open override func nsuiTouchesEnded(_ touches: Set<NSUITouch>, withEvent event: NSUIEvent?)
     {
         super.nsuiTouchesEnded(touches, withEvent: event)
-        delegate?.chartViewDidEndTouches?(self)
+        delegate?.touchesEnded?(in: self, touches: touches, withEvent: event)
     }
     
     open override func nsuiTouchesCancelled(_ touches: Set<NSUITouch>?, withEvent event: NSUIEvent?)
     {
         super.nsuiTouchesCancelled(touches, withEvent: event)
-        delegate?.chartViewDidCancelTouches?(self)
+        delegate?.touchesCancelled?(in: self, touches: touches, withEvent: event)
     }
 }
