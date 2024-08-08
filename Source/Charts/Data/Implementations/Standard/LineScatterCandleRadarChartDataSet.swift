@@ -30,6 +30,10 @@ open class LineScatterCandleRadarChartDataSet: BarLineScatterCandleBubbleChartDa
     /// `true` if vertical highlight indicator lines are enabled (drawn)
     open var isVerticalHighlightIndicatorEnabled: Bool { return drawVerticalHighlightIndicatorEnabled }
     
+    open var horizontalHighlightIndicatorInset: CGFloat = .zero
+
+    open var verticalHighlightIndicatorInset: CGFloat = .zero
+
     /// Enables / disables both vertical and horizontal highlight-indicators.
     /// :param: enabled
     open func setDrawHighlightIndicators(_ enabled: Bool)

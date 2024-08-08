@@ -30,6 +30,10 @@ public protocol LineScatterCandleRadarChartDataSetProtocol: BarLineScatterCandle
     /// `true` if vertical highlight indicator lines are enabled (drawn)
     var isVerticalHighlightIndicatorEnabled: Bool { get }
     
+    var horizontalHighlightIndicatorInset: CGFloat { get }
+
+    var verticalHighlightIndicatorInset: CGFloat { get }
+
     /// Enables / disables both vertical and horizontal highlight-indicators.
     /// :param: enabled
     func setDrawHighlightIndicators(_ enabled: Bool)
