@@ -929,10 +929,9 @@ open class LineChartRenderer: LineRadarRenderer
         let settings = LineChartDrawingPathSettings(
             lineWidth: dataSet.lineWidth,
             lineCapType: dataSet.lineCapType,
-            strokeColor: dataSet.color(atIndex: 0).cgColor,
             drawingRect: (dataProvider as! LineChartView).bounds   // FIXME: Andrey Fedorov - Should use the rect from `UIView.draw(_:)` instead
         )
 
-        pathHandler.handlePath(path, with: settings)
+        pathHandler.handlePath(path, with: settings, dataSet: dataSet)
     }
 }

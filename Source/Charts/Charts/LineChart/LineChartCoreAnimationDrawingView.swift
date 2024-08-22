@@ -41,19 +41,24 @@ final class LineChartCoreAnimationDrawingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setDrawingPath(_ path: CGPath, settings: LineChartDrawingPathSettings, lastHighlightedPoint: CGPoint?) {
-        let inactiveColor = UIColor.gray.cgColor
-
+    func setDrawingPath(
+        _ path: CGPath,
+        settings: LineChartDrawingPathSettings,
+        leadingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?,
+        trailingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?,
+        lastHighlightedPoint: CGPoint?
+    ) {
         if let lastHighlightedPoint {
             let drawingRect = settings.drawingRect
             let xCoord = lastHighlightedPoint.x
 
             // MARK: - Configuring `leadingGradientDrawingView`
 
-            leadingGradientDrawingView.customLayer.colors = [
-                inactiveColor,
-                inactiveColor.copy(alpha: 0.0)!,
-            ]
+            leadingGradientDrawingView.customLayer.colors = leadingSegmentAppearance?.gradient.colors.map(\.cgColor)
+            leadingGradientDrawingView.customLayer.locations = leadingSegmentAppearance?.gradient.locations as [NSNumber]?
+            leadingSegmentAppearance?.gradient.startPoint.map { leadingGradientDrawingView.customLayer.startPoint = $0 }
+            leadingSegmentAppearance?.gradient.endPoint.map { leadingGradientDrawingView.customLayer.endPoint = $0 }
+            leadingSegmentAppearance?.gradient.type.map { leadingGradientDrawingView.customLayer.type = $0 }
 
             let leadingGradientMask = CAShapeLayer()
             leadingGradientMask.frame = leadingGradientDrawingView.layer.bounds
@@ -68,7 +73,7 @@ final class LineChartCoreAnimationDrawingView: UIView {
             leadingSplineDrawingView.customLayer.lineWidth = settings.lineWidth
             leadingSplineDrawingView.customLayer.lineCap = settings.lineCapType.toCAShapeLayerLineCap()
             leadingSplineDrawingView.customLayer.path = path
-            leadingSplineDrawingView.customLayer.strokeColor = inactiveColor
+            leadingSplineDrawingView.customLayer.strokeColor = leadingSegmentAppearance?.lineColor.cgColor
 
             // MARK: - Configuring `leadingHostingView`
 
@@ -84,10 +89,11 @@ final class LineChartCoreAnimationDrawingView: UIView {
 
             // MARK: - Configuring `trailingGradientDrawingView`
 
-            trailingGradientDrawingView.customLayer.colors = [
-                settings.strokeColor,
-                settings.strokeColor.copy(alpha: 0.0)!,
-            ]
+            trailingGradientDrawingView.customLayer.colors = trailingSegmentAppearance?.gradient.colors.map(\.cgColor)
+            trailingGradientDrawingView.customLayer.locations = trailingSegmentAppearance?.gradient.locations as [NSNumber]?
+            trailingSegmentAppearance?.gradient.startPoint.map { trailingGradientDrawingView.customLayer.startPoint = $0 }
+            trailingSegmentAppearance?.gradient.endPoint.map { trailingGradientDrawingView.customLayer.endPoint = $0 }
+            trailingSegmentAppearance?.gradient.type.map { trailingGradientDrawingView.customLayer.type = $0 }
 
             let trailingGradientMask = CAShapeLayer()
             trailingGradientMask.frame = trailingGradientDrawingView.customLayer.bounds
@@ -102,7 +108,7 @@ final class LineChartCoreAnimationDrawingView: UIView {
             trailingSplineDrawingView.customLayer.lineWidth = settings.lineWidth
             trailingSplineDrawingView.customLayer.lineCap = settings.lineCapType.toCAShapeLayerLineCap()
             trailingSplineDrawingView.customLayer.path = path
-            trailingSplineDrawingView.customLayer.strokeColor = settings.strokeColor
+            trailingSplineDrawingView.customLayer.strokeColor = trailingSegmentAppearance?.lineColor.cgColor
 
             // MARK: - Configuring `trailingHostingView`
 
@@ -118,10 +124,11 @@ final class LineChartCoreAnimationDrawingView: UIView {
         } else {
             // MARK: - Configuring `leadingGradientDrawingView`
 
-            leadingGradientDrawingView.customLayer.colors = [
-                inactiveColor,
-                inactiveColor.copy(alpha: 0.0)!,
-            ]
+            leadingGradientDrawingView.customLayer.colors = leadingSegmentAppearance?.gradient.colors.map(\.cgColor)
+            leadingGradientDrawingView.customLayer.locations = leadingSegmentAppearance?.gradient.locations as [NSNumber]?
+            leadingSegmentAppearance?.gradient.startPoint.map { leadingGradientDrawingView.customLayer.startPoint = $0 }
+            leadingSegmentAppearance?.gradient.endPoint.map { leadingGradientDrawingView.customLayer.endPoint = $0 }
+            leadingSegmentAppearance?.gradient.type.map { leadingGradientDrawingView.customLayer.type = $0 }
 
             let leadingGradientMask = CAShapeLayer()
             leadingGradientMask.frame = leadingGradientDrawingView.layer.bounds
@@ -135,10 +142,10 @@ final class LineChartCoreAnimationDrawingView: UIView {
 
             // MARK: - Configuring `leadingSplineDrawingView`
 
-            leadingSplineDrawingView.customLayer.lineWidth = settings.lineWidth * 1
+            leadingSplineDrawingView.customLayer.lineWidth = settings.lineWidth
             leadingSplineDrawingView.customLayer.lineCap = settings.lineCapType.toCAShapeLayerLineCap()
             leadingSplineDrawingView.customLayer.path = path
-            leadingSplineDrawingView.customLayer.strokeColor = settings.strokeColor
+            leadingSplineDrawingView.customLayer.strokeColor = leadingSegmentAppearance?.lineColor.cgColor
 
             // MARK: - Configuring `leadingHostingView`
 

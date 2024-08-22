@@ -12,6 +12,5 @@ import CoreGraphics
 public struct LineChartDrawingPathSettings {
     let lineWidth: CGFloat
     let lineCapType: CGLineCap
-    let strokeColor: CGColor
     let drawingRect: CGRect
 }

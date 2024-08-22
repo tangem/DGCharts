@@ -10,5 +10,5 @@ import Foundation
 import CoreGraphics
 
 public protocol LineChartPathHandler: AnyObject {
-    func handlePath(_ path: CGPath, with settings: LineChartDrawingPathSettings)
+    func handlePath(_ path: CGPath, with settings: LineChartDrawingPathSettings, dataSet: LineChartDataSetProtocol)
 }

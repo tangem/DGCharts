@@ -42,15 +42,39 @@ public final class LineChartContainerViewController: UIViewController {
 // MARK: - LineChartPathHandler protocol conformance
 
 extension LineChartContainerViewController: LineChartPathHandler {
-    public func handlePath(_ path: CGPath, with settings: LineChartDrawingPathSettings) {
+    public func handlePath(_ path: CGPath, with settings: LineChartDrawingPathSettings, dataSet: LineChartDataSetProtocol) {
         let lastHighlightedPoint: CGPoint?
+        let leadingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?
+        let trailingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?
 
-        if let lastHighlighted = lineChartView.lastHighlighted {
+        if let lastHighlighted = lineChartView.lastHighlighted, let highlightedEntry = dataSet.entryForXValue(
+            lastHighlighted.x,
+            closestToY: lastHighlighted.y,
+            rounding: .closest
+        ) {
             lastHighlightedPoint = CGPoint(x: lastHighlighted.drawX, y: lastHighlighted.drawY)
+            leadingSegmentAppearance = delegate?.segmentAppearanceBefore(
+                highlightedEntry: highlightedEntry,
+                highlight: lastHighlighted,
+                viewController: self
+            )
+            trailingSegmentAppearance = delegate?.segmentAppearanceAfter(
+                highlightedEntry: highlightedEntry,
+                highlight: lastHighlighted,
+                viewController: self
+            )
         } else {
             lastHighlightedPoint = nil
+            leadingSegmentAppearance = delegate?.defaultSegmentAppearance(viewController: self)
+            trailingSegmentAppearance = nil
         }
 
-        coreAnimationDrawingView.setDrawingPath(path, settings: settings, lastHighlightedPoint: lastHighlightedPoint)
+        coreAnimationDrawingView.setDrawingPath(
+            path,
+            settings: settings,
+            leadingSegmentAppearance: leadingSegmentAppearance,
+            trailingSegmentAppearance: trailingSegmentAppearance,
+            lastHighlightedPoint: lastHighlightedPoint
+        )
     }
 }
