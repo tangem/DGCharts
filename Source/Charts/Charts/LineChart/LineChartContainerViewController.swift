@@ -10,6 +10,8 @@ import Foundation
 import UIKit
 
 public final class LineChartContainerViewController: UIViewController {
+    public weak var delegate: LineChartContainerViewControllerDelegate?
+
     public private(set) lazy var lineChartView = LineChartView()
 
     private lazy var coreAnimationDrawingView = LineChartCoreAnimationDrawingView()
