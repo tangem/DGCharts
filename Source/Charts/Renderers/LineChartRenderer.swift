@@ -22,6 +22,8 @@ open class LineChartRenderer: LineRadarRenderer
 
     @objc open weak var dataProvider: LineChartDataProvider?
     
+    open weak var pathHandler: LineChartPathHandler?
+
     @objc public init(dataProvider: LineChartDataProvider, animator: Animator, viewPortHandler: ViewPortHandler)
     {
         super.init(animator: animator, viewPortHandler: viewPortHandler)
@@ -295,10 +297,17 @@ open class LineChartRenderer: LineRadarRenderer
     
     private var _lineSegments = [CGPoint](repeating: CGPoint(), count: 2)
     
+    private var cachedPath: CGPath?
+
     @objc open func drawLinear(context: CGContext, dataSet: LineChartDataSetProtocol)
     {
         guard let dataProvider = dataProvider else { return }
         
+        if let cachedPath, let pathHandler {
+            handlePath(cachedPath, pathHandler: pathHandler, dataSet: dataSet)
+            return
+        }
+
         let trans = dataProvider.getTransformer(forAxis: dataSet.axisDependency)
         
         let valueToPixelMatrix = trans.valueToPixelMatrix
@@ -442,10 +451,15 @@ open class LineChartRenderer: LineRadarRenderer
                 if dataSet.isDrawLineWithGradientEnabled {
                     drawGradientLine(context: context, dataSet: dataSet, spline: path, matrix: valueToPixelMatrix)
                 } else {
-                    context.beginPath()
-                    context.addPath(path)
-                    context.setStrokeColor(dataSet.color(atIndex: 0).cgColor)
-                    context.strokePath()
+                    if let pathHandler {
+                        cachedPath = path
+                        handlePath(path, pathHandler: pathHandler, dataSet: dataSet)
+                    } else {
+                        context.beginPath()
+                        context.addPath(path)
+                        context.setStrokeColor(dataSet.color(atIndex: 0).cgColor)
+                        context.strokePath()
+                    }
                 }
             }
         }
@@ -905,5 +919,20 @@ open class LineChartRenderer: LineRadarRenderer
         modifier(element)
 
         return element
+    }
+
+    private func handlePath(
+        _ path: CGPath,
+        pathHandler: LineChartPathHandler,
+        dataSet: LineChartDataSetProtocol
+    ) {
+        let settings = LineChartDrawingPathSettings(
+            lineWidth: dataSet.lineWidth,
+            lineCapType: dataSet.lineCapType,
+            strokeColor: dataSet.color(atIndex: 0).cgColor,
+            drawingRect: (dataProvider as! LineChartView).bounds   // FIXME: Andrey Fedorov - Should use the rect from `UIView.draw(_:)` instead
+        )
+
+        pathHandler.handlePath(path, with: settings)
     }
 }

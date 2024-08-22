@@ -235,6 +235,12 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             context.clip(to: viewPortHandler.contentRect)
         }
 
+        // Drawing highlights BEFORE drawing the data - so we can read their actual `drawX`/`drawY` in `drawData(context:)`
+        if (valuesToHighlight())
+        {
+            renderer.drawHighlighted(context: context, indices: highlighted)
+        }
+
         renderer.drawData(context: context)
         
         // The renderers are responsible for clipping, to account for line-width center etc.
@@ -243,12 +249,6 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             xAxisRenderer.renderGridLines(context: context)
             leftYAxisRenderer.renderGridLines(context: context)
             rightYAxisRenderer.renderGridLines(context: context)
-        }
-        
-        // if highlighting is enabled
-        if (valuesToHighlight())
-        {
-            renderer.drawHighlighted(context: context, indices: highlighted)
         }
         
         context.restoreGState()

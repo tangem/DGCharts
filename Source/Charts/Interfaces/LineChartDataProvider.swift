@@ -16,6 +16,7 @@ import CoreGraphics
 public protocol LineChartDataProvider: BarLineScatterCandleBubbleChartDataProvider
 {
     var lineData: LineChartData? { get }
+    var lastHighlighted: Highlight? { get }
     
     func getAxis(_ axis: YAxis.AxisDependency) -> YAxis
 }
