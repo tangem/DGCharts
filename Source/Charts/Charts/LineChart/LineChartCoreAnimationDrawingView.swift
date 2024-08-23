@@ -64,8 +64,9 @@ final class LineChartCoreAnimationDrawingView: UIView {
             leadingGradientMask.frame = leadingGradientDrawingView.layer.bounds
             leadingGradientMask.fillColor = UIColor.black.cgColor
             leadingGradientMask.strokeColor = UIColor.black.cgColor
-            let leadingGradientMaskPath = makeGradientMaskPath(from: path, bounds: leadingGradientMask.bounds)
-            leadingGradientMask.path = leadingGradientMaskPath
+            leadingGradientMask.lineWidth = settings.lineWidth
+            leadingGradientMask.lineCap = settings.lineCapType.toCAShapeLayerLineCap()
+            leadingGradientMask.path = makeGradientMaskPath(from: path, bounds: leadingGradientMask.bounds)
             leadingGradientDrawingView.layer.mask = leadingGradientMask
 
             // MARK: - Configuring `leadingSplineDrawingView`
@@ -97,10 +98,11 @@ final class LineChartCoreAnimationDrawingView: UIView {
 
             let trailingGradientMask = CAShapeLayer()
             trailingGradientMask.frame = trailingGradientDrawingView.customLayer.bounds
-            let trailingGradientMaskPath = makeGradientMaskPath(from: path, bounds: trailingGradientMask.bounds).mutableCopy()!
             trailingGradientMask.fillColor = UIColor.black.cgColor
             trailingGradientMask.strokeColor = UIColor.black.cgColor
-            trailingGradientMask.path = trailingGradientMaskPath
+            leadingGradientMask.lineWidth = settings.lineWidth
+            leadingGradientMask.lineCap = settings.lineCapType.toCAShapeLayerLineCap()
+            trailingGradientMask.path = makeGradientMaskPath(from: path, bounds: trailingGradientMask.bounds)
             trailingGradientDrawingView.layer.mask = trailingGradientMask
 
             // MARK: - Configuring `trailingSplineDrawingView`
@@ -132,12 +134,11 @@ final class LineChartCoreAnimationDrawingView: UIView {
 
             let leadingGradientMask = CAShapeLayer()
             leadingGradientMask.frame = leadingGradientDrawingView.layer.bounds
-            leadingGradientMask.path = makeGradientMaskPath(from: path, bounds: leadingGradientMask.bounds)
-            leadingGradientMask.lineWidth = settings.lineWidth
-            leadingGradientMask.lineCap = settings.lineCapType.toCAShapeLayerLineCap()
             leadingGradientMask.fillColor = UIColor.black.cgColor
             leadingGradientMask.strokeColor = UIColor.black.cgColor
-            leadingGradientMask.fillRule = .nonZero
+            leadingGradientMask.lineWidth = settings.lineWidth
+            leadingGradientMask.lineCap = settings.lineCapType.toCAShapeLayerLineCap()
+            leadingGradientMask.path = makeGradientMaskPath(from: path, bounds: leadingGradientMask.bounds)
             leadingGradientDrawingView.layer.mask = leadingGradientMask
 
             // MARK: - Configuring `leadingSplineDrawingView`
