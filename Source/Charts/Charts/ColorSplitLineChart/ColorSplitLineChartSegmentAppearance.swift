@@ -24,7 +24,7 @@ public struct ColorSplitLineChartSegmentAppearance {
             self.endPoint = endPoint
             self.type = type
         }
-        
+
         public let colors: [NSUIColor]
         public let locations: [CGFloat]?
         public let startPoint: CGPoint?

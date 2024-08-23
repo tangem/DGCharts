@@ -59,7 +59,7 @@ final class ColorSplitLineChartCoreAnimationDrawingView: UIView {
         if let lastHighlightedPoint {
             drawPath(
                 path,
-                settings: settings, 
+                settings: settings,
                 leadingSegmentAppearance: leadingSegmentAppearance,
                 trailingSegmentAppearance: trailingSegmentAppearance,
                 lastHighlightedPointXCoordinate: lastHighlightedPoint.x
@@ -74,6 +74,7 @@ final class ColorSplitLineChartCoreAnimationDrawingView: UIView {
         }
     }
 
+    /// Draws a path when there is a highlighted point on the path.
     private func drawPath(
         _ path: CGPath,
         settings: LineChartDrawingPathSettings,
@@ -158,6 +159,7 @@ final class ColorSplitLineChartCoreAnimationDrawingView: UIView {
         trailingHostingView.layer.mask = trailingHostingViewMask
     }
 
+    /// Draws a path when there is no highlighted point on the path.
     private func drawPath(
         _ path: CGPath,
         settings: LineChartDrawingPathSettings,
