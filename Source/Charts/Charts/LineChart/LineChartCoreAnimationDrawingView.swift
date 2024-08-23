@@ -81,8 +81,7 @@ final class LineChartCoreAnimationDrawingView: UIView {
         trailingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?,
         lastHighlightedPointXCoordinate: CGFloat
     ) {
-        var drawingRect = settings.drawingRect
-        drawingRect.origin = .zero
+        let drawingRect = settings.drawingRect
 
         // MARK: - Configuring `leadingGradientMask`
 
@@ -165,8 +164,7 @@ final class LineChartCoreAnimationDrawingView: UIView {
         leadingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?,
         trailingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?
     ) {
-        var drawingRect = settings.drawingRect
-        drawingRect.origin = .zero
+        let drawingRect = settings.drawingRect
 
         // MARK: - Configuring `leadingGradientMask`
 

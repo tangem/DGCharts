@@ -926,10 +926,13 @@ open class LineChartRenderer: LineRadarRenderer
         pathHandler: LineChartPathHandler,
         dataSet: LineChartDataSetProtocol
     ) {
+        let chartView = dataProvider as? LineChartView
+        let drawingRect = chartView?.bounds ?? .zero
+
         let settings = LineChartDrawingPathSettings(
             lineWidth: dataSet.lineWidth,
             lineCapType: dataSet.lineCapType,
-            drawingRect: (dataProvider as! LineChartView).bounds   // FIXME: Andrey Fedorov - Should use the rect from `UIView.draw(_:)` instead
+            drawingRect: drawingRect
         )
 
         pathHandler.handlePath(path, with: settings, dataSet: dataSet)
