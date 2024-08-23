@@ -297,15 +297,18 @@ open class LineChartRenderer: LineRadarRenderer
     
     private var _lineSegments = [CGPoint](repeating: CGPoint(), count: 2)
     
-    private var cachedPath: CGPath?
+    private var cachedDrawingPath: CachedDrawingPath?
 
     @objc open func drawLinear(context: CGContext, dataSet: LineChartDataSetProtocol, in rect: CGRect)
     {
         guard let dataProvider = dataProvider else { return }
         
-        if let cachedPath, let pathHandler {
-            handlePath(cachedPath, pathHandler: pathHandler, dataSet: dataSet, drawingRect: rect)
+        if let pathHandler, let cachedDrawingPath, cachedDrawingPath.drawingRect == rect {
+            handlePath(cachedDrawingPath.path, pathHandler: pathHandler, dataSet: dataSet, drawingRect: rect)
             return
+        } else {
+            // The drawing rect has changed, so the cached drawing path is not valid anymore
+            cachedDrawingPath = nil
         }
 
         let trans = dataProvider.getTransformer(forAxis: dataSet.axisDependency)
@@ -452,7 +455,7 @@ open class LineChartRenderer: LineRadarRenderer
                     drawGradientLine(context: context, dataSet: dataSet, spline: path, matrix: valueToPixelMatrix)
                 } else {
                     if let pathHandler {
-                        cachedPath = path
+                        cachedDrawingPath = CachedDrawingPath(path: path, drawingRect: rect)
                         handlePath(path, pathHandler: pathHandler, dataSet: dataSet, drawingRect: rect)
                     } else {
                         context.beginPath()
@@ -934,5 +937,14 @@ open class LineChartRenderer: LineRadarRenderer
         )
 
         pathHandler.handlePath(path, with: settings, dataSet: dataSet)
+    }
+}
+
+// MARK: - Auxiliary types
+
+private extension LineChartRenderer {
+    struct CachedDrawingPath {
+        let path: CGPath
+        let drawingRect: CGRect
     }
 }
