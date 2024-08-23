@@ -304,7 +304,16 @@ open class LineChartRenderer: LineRadarRenderer
     {
         guard let dataProvider = dataProvider else { return }
         
-        if let pathHandler, let cachedDrawingPath, cachedDrawingPath.drawingRect == rect {
+        // Warning: The cache WILL NOT get invalidated if any properties of the `dataSet` that affect the creation of the
+        // drawing path are changed.  For example, `dataSet.lineWidth`, `dataSet.lineCapType` and so on.
+        // For now, it's perfectly fine, since we only set such properties once, before the first render pass.
+        //
+        // Implement your own cache eviction strategy if you need more granular cache eviction logic.
+        if let pathHandler,
+           let cachedDrawingPath,
+           cachedDrawingPath.drawingRect == rect,
+           cachedDrawingPath.dataSetObjectIdentifier == ObjectIdentifier(dataSet)
+        {
             handlePath(cachedDrawingPath.path, pathHandler: pathHandler, dataSet: dataSet, drawingRect: rect)
             return
         } else {
@@ -456,7 +465,11 @@ open class LineChartRenderer: LineRadarRenderer
                     drawGradientLine(context: context, dataSet: dataSet, spline: path, matrix: valueToPixelMatrix)
                 } else {
                     if let pathHandler {
-                        cachedDrawingPath = CachedDrawingPath(path: path, drawingRect: rect)
+                        cachedDrawingPath = CachedDrawingPath(
+                            path: path,
+                            drawingRect: rect,
+                            dataSetObjectIdentifier: ObjectIdentifier(dataSet)
+                        )
                         handlePath(path, pathHandler: pathHandler, dataSet: dataSet, drawingRect: rect)
                     } else {
                         context.beginPath()
@@ -947,5 +960,6 @@ private extension LineChartRenderer {
     struct CachedDrawingPath {
         let path: CGPath
         let drawingRect: CGRect
+        let dataSetObjectIdentifier: ObjectIdentifier
     }
 }
