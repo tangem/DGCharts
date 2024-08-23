@@ -1,5 +1,5 @@
 //
-//  LineChartContainerViewController.swift
+//  ColorSplitLineChartContainerViewController.swift
 //  Tangem
 //
 //  Created by Andrey Fedorov on 22.08.2024.
@@ -9,12 +9,12 @@
 import Foundation
 import UIKit
 
-public final class LineChartContainerViewController: UIViewController {
-    public weak var delegate: LineChartContainerViewControllerDelegate?
+public final class ColorSplitLineChartContainerViewController: UIViewController {
+    public weak var delegate: ColorSplitLineChartContainerViewControllerDelegate?
 
     public private(set) lazy var lineChartView = LineChartView()
 
-    private lazy var coreAnimationDrawingView = LineChartCoreAnimationDrawingView()
+    private lazy var coreAnimationDrawingView = ColorSplitLineChartCoreAnimationDrawingView()
 
     override public func viewDidLoad() {
         super.viewDidLoad()
@@ -41,11 +41,11 @@ public final class LineChartContainerViewController: UIViewController {
 
 // MARK: - LineChartPathHandler protocol conformance
 
-extension LineChartContainerViewController: LineChartPathHandler {
+extension ColorSplitLineChartContainerViewController: LineChartPathHandler {
     public func handlePath(_ path: CGPath, with settings: LineChartDrawingPathSettings, dataSet: LineChartDataSetProtocol) {
         let lastHighlightedPoint: CGPoint?
-        let leadingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?
-        let trailingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?
+        let leadingSegmentAppearance: ColorSplitLineChartSegmentAppearance?
+        let trailingSegmentAppearance: ColorSplitLineChartSegmentAppearance?
 
         if let lastHighlighted = lineChartView.lastHighlighted, let highlightedEntry = dataSet.entryForXValue(
             lastHighlighted.x,

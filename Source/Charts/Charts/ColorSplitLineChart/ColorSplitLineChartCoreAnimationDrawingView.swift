@@ -1,5 +1,5 @@
 //
-//  LineChartCoreAnimationDrawingView.swift
+//  ColorSplitLineChartCoreAnimationDrawingView.swift
 //  Tangem
 //
 //  Created by Andrey Fedorov on 22.08.2024.
@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-final class LineChartCoreAnimationDrawingView: UIView {
+final class ColorSplitLineChartCoreAnimationDrawingView: UIView {
     private typealias SplineDrawingView = CustomCALayerView<CAShapeLayer>
     private typealias GradientDrawingView = CustomCALayerView<CAGradientLayer>
 
@@ -52,8 +52,8 @@ final class LineChartCoreAnimationDrawingView: UIView {
     func setDrawingPath(
         _ path: CGPath,
         settings: LineChartDrawingPathSettings,
-        leadingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?,
-        trailingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?,
+        leadingSegmentAppearance: ColorSplitLineChartSegmentAppearance?,
+        trailingSegmentAppearance: ColorSplitLineChartSegmentAppearance?,
         lastHighlightedPoint: CGPoint?
     ) {
         if let lastHighlightedPoint {
@@ -77,8 +77,8 @@ final class LineChartCoreAnimationDrawingView: UIView {
     private func drawPath(
         _ path: CGPath,
         settings: LineChartDrawingPathSettings,
-        leadingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?,
-        trailingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?,
+        leadingSegmentAppearance: ColorSplitLineChartSegmentAppearance?,
+        trailingSegmentAppearance: ColorSplitLineChartSegmentAppearance?,
         lastHighlightedPointXCoordinate: CGFloat
     ) {
         let drawingRect = settings.drawingRect
@@ -161,8 +161,8 @@ final class LineChartCoreAnimationDrawingView: UIView {
     private func drawPath(
         _ path: CGPath,
         settings: LineChartDrawingPathSettings,
-        leadingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?,
-        trailingSegmentAppearance: LineChartContainerViewControllerSegmentAppearance?
+        leadingSegmentAppearance: ColorSplitLineChartSegmentAppearance?,
+        trailingSegmentAppearance: ColorSplitLineChartSegmentAppearance?
     ) {
         let drawingRect = settings.drawingRect
 
@@ -241,7 +241,7 @@ final class LineChartCoreAnimationDrawingView: UIView {
 
 // MARK: - Factory methods
 
-private extension LineChartCoreAnimationDrawingView {
+private extension ColorSplitLineChartCoreAnimationDrawingView {
     private static func makeSplineDrawingView() -> SplineDrawingView {
         let drawingView = SplineDrawingView()
 
