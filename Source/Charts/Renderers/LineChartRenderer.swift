@@ -22,6 +22,7 @@ open class LineChartRenderer: LineRadarRenderer
 
     @objc open weak var dataProvider: LineChartDataProvider?
     
+    /// If this value is not nil, the created drawing path won't be drawn and will be passed to this handler instead.
     open weak var pathHandler: LineChartPathHandler?
 
     @objc public init(dataProvider: LineChartDataProvider, animator: Animator, viewPortHandler: ViewPortHandler)
