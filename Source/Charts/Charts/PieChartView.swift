@@ -106,7 +106,7 @@ open class PieChartView: PieRadarChartViewBase
             return
         }
         
-        renderer.drawData(context: context)
+        renderer.drawData(context: context, in: rect)
         
         if (valuesToHighlight())
         {

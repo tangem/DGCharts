@@ -31,20 +31,20 @@ open class LineChartRenderer: LineRadarRenderer
         self.dataProvider = dataProvider
     }
     
-    open override func drawData(context: CGContext)
+    open override func drawData(context: CGContext, in rect: CGRect)
     {
         guard let lineData = dataProvider?.lineData else { return }
 
         let sets = lineData.dataSets as? [LineChartDataSet]
         assert(sets != nil, "Datasets for LineChartRenderer must conform to ILineChartDataSet")
 
-        let drawDataSet = { self.drawDataSet(context: context, dataSet: $0) }
+        let drawDataSet = { self.drawDataSet(context: context, dataSet: $0, in: rect) }
         sets!.lazy
             .filter(\.isVisible)
             .forEach(drawDataSet)
     }
     
-    @objc open func drawDataSet(context: CGContext, dataSet: LineChartDataSetProtocol)
+    @objc open func drawDataSet(context: CGContext, dataSet: LineChartDataSetProtocol, in rect: CGRect)
     {
         if dataSet.entryCount < 1
         {
@@ -70,7 +70,7 @@ open class LineChartRenderer: LineRadarRenderer
         {
         case .linear: fallthrough
         case .stepped:
-            drawLinear(context: context, dataSet: dataSet)
+            drawLinear(context: context, dataSet: dataSet, in: rect)
             
         case .cubicBezier:
             drawCubicBezier(context: context, dataSet: dataSet)
@@ -299,12 +299,12 @@ open class LineChartRenderer: LineRadarRenderer
     
     private var cachedPath: CGPath?
 
-    @objc open func drawLinear(context: CGContext, dataSet: LineChartDataSetProtocol)
+    @objc open func drawLinear(context: CGContext, dataSet: LineChartDataSetProtocol, in rect: CGRect)
     {
         guard let dataProvider = dataProvider else { return }
         
         if let cachedPath, let pathHandler {
-            handlePath(cachedPath, pathHandler: pathHandler, dataSet: dataSet)
+            handlePath(cachedPath, pathHandler: pathHandler, dataSet: dataSet, drawingRect: rect)
             return
         }
 
@@ -453,7 +453,7 @@ open class LineChartRenderer: LineRadarRenderer
                 } else {
                     if let pathHandler {
                         cachedPath = path
-                        handlePath(path, pathHandler: pathHandler, dataSet: dataSet)
+                        handlePath(path, pathHandler: pathHandler, dataSet: dataSet, drawingRect: rect)
                     } else {
                         context.beginPath()
                         context.addPath(path)
@@ -924,11 +924,9 @@ open class LineChartRenderer: LineRadarRenderer
     private func handlePath(
         _ path: CGPath,
         pathHandler: LineChartPathHandler,
-        dataSet: LineChartDataSetProtocol
+        dataSet: LineChartDataSetProtocol,
+        drawingRect: CGRect
     ) {
-        let chartView = dataProvider as? LineChartView
-        let drawingRect = chartView?.bounds ?? .zero
-
         let settings = LineChartDrawingPathSettings(
             lineWidth: dataSet.lineWidth,
             lineCapType: dataSet.lineCapType,

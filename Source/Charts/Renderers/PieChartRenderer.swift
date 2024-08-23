@@ -36,7 +36,7 @@ open class PieChartRenderer: NSObject, DataRenderer
         super.init()
     }
     
-    open func drawData(context: CGContext)
+    open func drawData(context: CGContext, in rect: CGRect)
     {
         guard let chart = chart, let pieData = chart.data else { return }
 

@@ -23,7 +23,7 @@ open class CandleStickChartRenderer: LineScatterCandleRadarRenderer
         self.dataProvider = dataProvider
     }
     
-    open override func drawData(context: CGContext)
+    open override func drawData(context: CGContext, in rect: CGRect)
     {
         guard let dataProvider = dataProvider, let candleData = dataProvider.candleData else { return }
 

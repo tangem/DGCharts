@@ -241,7 +241,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             renderer.drawHighlighted(context: context, indices: highlighted)
         }
 
-        renderer.drawData(context: context)
+        renderer.drawData(context: context, in: rect)
         
         // The renderers are responsible for clipping, to account for line-width center etc.
         if !xAxis.drawGridLinesBehindDataEnabled

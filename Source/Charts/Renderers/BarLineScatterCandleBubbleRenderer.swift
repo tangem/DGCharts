@@ -31,7 +31,7 @@ open class BarLineScatterCandleBubbleRenderer: NSObject, DataRenderer
         super.init()
     }
 
-    open func drawData(context: CGContext) { }
+    open func drawData(context: CGContext, in rect: CGRect) { }
 
     open func drawValues(context: CGContext) { }
 
