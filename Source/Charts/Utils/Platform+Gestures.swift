@@ -50,6 +50,18 @@ extension NSUIPanGestureRecognizer
     {
         return super.location(ofTouch: touch, in: inView)
     }
+
+    @objc final var nsuiMaximumNumberOfTouches: Int
+    {
+        get
+        {
+            return self.maximumNumberOfTouches
+        }
+        set
+        {
+            self.maximumNumberOfTouches = newValue
+        }
+    }
 }
 
 #if !os(tvOS)
@@ -131,6 +143,18 @@ extension NSUIPanGestureRecognizer
     final func nsuiLocationOfTouch(_ touch: Int, inView: NSView?) -> NSPoint
     {
         return super.location(in: inView)
+    }
+
+    @objc final var nsuiMaximumNumberOfTouches: Int
+    {
+        get
+        {
+            return self.numberOfTouchesRequired
+        }
+        set
+        {
+            self.numberOfTouchesRequired = newValue
+        }
     }
 }
 
