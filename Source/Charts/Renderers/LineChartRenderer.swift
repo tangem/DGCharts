@@ -22,6 +22,9 @@ open class LineChartRenderer: LineRadarRenderer
 
     @objc open weak var dataProvider: LineChartDataProvider?
     
+    /// If this value is not nil, the created drawing path won't be drawn and will be passed to this handler instead.
+    open weak var pathHandler: LineChartPathHandler?
+
     @objc public init(dataProvider: LineChartDataProvider, animator: Animator, viewPortHandler: ViewPortHandler)
     {
         super.init(animator: animator, viewPortHandler: viewPortHandler)
@@ -29,20 +32,20 @@ open class LineChartRenderer: LineRadarRenderer
         self.dataProvider = dataProvider
     }
     
-    open override func drawData(context: CGContext)
+    open override func drawData(context: CGContext, in rect: CGRect)
     {
         guard let lineData = dataProvider?.lineData else { return }
 
         let sets = lineData.dataSets as? [LineChartDataSet]
         assert(sets != nil, "Datasets for LineChartRenderer must conform to ILineChartDataSet")
 
-        let drawDataSet = { self.drawDataSet(context: context, dataSet: $0) }
+        let drawDataSet = { self.drawDataSet(context: context, dataSet: $0, in: rect) }
         sets!.lazy
             .filter(\.isVisible)
             .forEach(drawDataSet)
     }
     
-    @objc open func drawDataSet(context: CGContext, dataSet: LineChartDataSetProtocol)
+    @objc open func drawDataSet(context: CGContext, dataSet: LineChartDataSetProtocol, in rect: CGRect)
     {
         if dataSet.entryCount < 1
         {
@@ -68,7 +71,7 @@ open class LineChartRenderer: LineRadarRenderer
         {
         case .linear: fallthrough
         case .stepped:
-            drawLinear(context: context, dataSet: dataSet)
+            drawLinear(context: context, dataSet: dataSet, in: rect)
             
         case .cubicBezier:
             drawCubicBezier(context: context, dataSet: dataSet)
@@ -295,10 +298,29 @@ open class LineChartRenderer: LineRadarRenderer
     
     private var _lineSegments = [CGPoint](repeating: CGPoint(), count: 2)
     
-    @objc open func drawLinear(context: CGContext, dataSet: LineChartDataSetProtocol)
+    private var cachedDrawingPath: CachedDrawingPath?
+
+    @objc open func drawLinear(context: CGContext, dataSet: LineChartDataSetProtocol, in rect: CGRect)
     {
         guard let dataProvider = dataProvider else { return }
         
+        // Warning: The cache WILL NOT get invalidated if any properties of the `dataSet` that affect the creation of the
+        // drawing path are changed.  For example, `dataSet.lineWidth`, `dataSet.lineCapType` and so on.
+        // For now, it's perfectly fine, since we only set such properties once, before the first render pass.
+        //
+        // Implement your own cache eviction strategy if you need more granular cache eviction logic.
+        if let pathHandler,
+           let cachedDrawingPath,
+           cachedDrawingPath.drawingRect == rect,
+           cachedDrawingPath.dataSetObjectIdentifier == ObjectIdentifier(dataSet)
+        {
+            handlePath(cachedDrawingPath.path, pathHandler: pathHandler, dataSet: dataSet, drawingRect: rect)
+            return
+        } else {
+            // The drawing rect has changed, so the cached drawing path is not valid anymore
+            cachedDrawingPath = nil
+        }
+
         let trans = dataProvider.getTransformer(forAxis: dataSet.axisDependency)
         
         let valueToPixelMatrix = trans.valueToPixelMatrix
@@ -442,10 +464,19 @@ open class LineChartRenderer: LineRadarRenderer
                 if dataSet.isDrawLineWithGradientEnabled {
                     drawGradientLine(context: context, dataSet: dataSet, spline: path, matrix: valueToPixelMatrix)
                 } else {
-                    context.beginPath()
-                    context.addPath(path)
-                    context.setStrokeColor(dataSet.color(atIndex: 0).cgColor)
-                    context.strokePath()
+                    if let pathHandler {
+                        cachedDrawingPath = CachedDrawingPath(
+                            path: path,
+                            drawingRect: rect,
+                            dataSetObjectIdentifier: ObjectIdentifier(dataSet)
+                        )
+                        handlePath(path, pathHandler: pathHandler, dataSet: dataSet, drawingRect: rect)
+                    } else {
+                        context.beginPath()
+                        context.addPath(path)
+                        context.setStrokeColor(dataSet.color(atIndex: 0).cgColor)
+                        context.strokePath()
+                    }
                 }
             }
         }
@@ -905,5 +936,30 @@ open class LineChartRenderer: LineRadarRenderer
         modifier(element)
 
         return element
+    }
+
+    private func handlePath(
+        _ path: CGPath,
+        pathHandler: LineChartPathHandler,
+        dataSet: LineChartDataSetProtocol,
+        drawingRect: CGRect
+    ) {
+        let settings = LineChartDrawingPathSettings(
+            lineWidth: dataSet.lineWidth,
+            lineCapType: dataSet.lineCapType,
+            drawingRect: drawingRect
+        )
+
+        pathHandler.handlePath(path, with: settings, dataSet: dataSet)
+    }
+}
+
+// MARK: - Auxiliary types
+
+private extension LineChartRenderer {
+    struct CachedDrawingPath {
+        let path: CGPath
+        let drawingRect: CGRect
+        let dataSetObjectIdentifier: ObjectIdentifier
     }
 }

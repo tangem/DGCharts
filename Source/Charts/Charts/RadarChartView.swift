@@ -123,7 +123,7 @@ open class RadarChartView: PieRadarChartViewBase
             _yAxisRenderer.renderLimitLines(context: context)
         }
 
-        renderer.drawData(context: context)
+        renderer.drawData(context: context, in: rect)
 
         if valuesToHighlight()
         {

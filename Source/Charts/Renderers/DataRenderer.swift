@@ -26,7 +26,7 @@ public protocol DataRenderer: Renderer
 
     var animator: Animator { get }
 
-    func drawData(context: CGContext)
+    func drawData(context: CGContext, in rect: CGRect)
 
     func drawValues(context: CGContext)
 

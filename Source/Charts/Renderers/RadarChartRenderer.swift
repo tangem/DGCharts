@@ -33,7 +33,7 @@ open class RadarChartRenderer: LineRadarRenderer
         self.chart = chart
     }
     
-    open override func drawData(context: CGContext)
+    open override func drawData(context: CGContext, in rect: CGRect)
     {
         guard let chart = chart,
               let radarData = chart.data as? RadarChartData else

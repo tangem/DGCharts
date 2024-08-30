@@ -21,4 +21,20 @@ public final class ColorSplitLineChartDataSet: LineChartDataSet {
     public var innerHighlightCircleRadius = 6.0
 
     public var highlightCircleHoleRadius = 4.0
+
+    // MARK: NSCopying
+
+    public override func copy(with zone: NSZone? = nil) -> Any {
+        let copy = super.copy(with: zone) as! ColorSplitLineChartDataSet
+        copy.drawHighlightCircleEnabled = drawHighlightCircleEnabled
+        copy.outerHighlightCircleAlpha = outerHighlightCircleAlpha
+        copy.outerHighlightCircleColor = outerHighlightCircleColor
+        copy.outerHighlightCircleRadius = outerHighlightCircleRadius
+        copy.innerHighlightCircleAlpha = innerHighlightCircleAlpha
+        copy.innerHighlightCircleColor = innerHighlightCircleColor
+        copy.innerHighlightCircleRadius = innerHighlightCircleRadius
+        copy.highlightCircleHoleRadius = highlightCircleHoleRadius
+
+        return copy
+    }
 }

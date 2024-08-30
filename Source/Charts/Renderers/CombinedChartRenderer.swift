@@ -93,7 +93,7 @@ open class CombinedChartRenderer: NSObject, DataRenderer
         _renderers.forEach { $0.initBuffers() }
     }
     
-    open func drawData(context: CGContext)
+    open func drawData(context: CGContext, in rect: CGRect)
     {
         // If we redraw the data, remove and repopulate accessible elements to update label values and frames
         accessibleChartElements.removeAll()
@@ -111,7 +111,7 @@ open class CombinedChartRenderer: NSObject, DataRenderer
         // TODO: Due to the potential complexity of data presented in Combined charts, a more usable way
         // for VO accessibility would be to use axis based traversal rather than by dataset.
         // Hence, accessibleChartElements is not populated below. (Individual renderers guard against dataSource being their respective views)
-        _renderers.forEach { $0.drawData(context: context) }
+        _renderers.forEach { $0.drawData(context: context, in: rect) }
     }
     
     open func drawValues(context: CGContext)
