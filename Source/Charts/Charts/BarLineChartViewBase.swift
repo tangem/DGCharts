@@ -133,6 +133,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         self.addGestureRecognizer(_panGestureRecognizer)
         
         _doubleTapGestureRecognizer.isEnabled = _doubleTapToZoomEnabled
+        _panGestureRecognizer.nsuiMaximumNumberOfTouches = 1
         _panGestureRecognizer.isEnabled = _dragXEnabled || _dragYEnabled
 
         #if !os(tvOS)

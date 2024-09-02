@@ -292,12 +292,14 @@ open class XAxisRenderer: NSObject, AxisRenderer
                         position.x + width > viewPortHandler.chartWidth
                     {
                         position.x -= width / 2.0
+                        position.x -= axis.firstLastLabelYOffset
                     }
                 }
                 else if i == 0
                 { // avoid clipping of the first
                     let width = labelns.boundingRect(with: labelMaxSize, options: .usesLineFragmentOrigin, attributes: labelAttrs, context: nil).size.width
                     position.x += width / 2.0
+                    position.x += axis.firstLastLabelYOffset
                 }
             }
             
